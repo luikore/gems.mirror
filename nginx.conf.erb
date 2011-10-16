@@ -1,0 +1,41 @@
+worker_processes 2;
+worker_rlimit_nofile 8192;
+
+pid <%= `pwd`.strip %>/var/nginx.pid;
+error_log <%= `pwd`.strip %>/var/nginx.error.log;
+
+events {
+  worker_connections 100; # increase if you have lots of clients
+  accept_mutex on;
+  <% if RUBY_PLATFORM =~ /linux/ %>
+  use epoll;
+  <% else %>
+  use kqueue; # FreeBSD / OSX
+  <% end %>
+}
+
+http {
+  access_log /tmp/nginx.access.log;
+  include /etc/nginx/mime.types;
+  default_type binary/octet-stream;
+  sendfile on;
+
+  upstream app {
+    server localhost:9292;
+  }
+
+  server {
+    listen 80;
+    keepalive_timeout 120;
+    root <%= `pwd`.strip %>/root;
+
+    location ~ ^/(specs|latest_specs|quick|gems)* {
+      try_files $uri @app;
+    }
+
+    location @app {
+      proxy_redirect off;
+      proxy_pass http://app;
+    }
+  }
+}
