@@ -3,7 +3,7 @@ require "fileutils"
 require 'thread'
 
 M = Mutex.new
-CACHE = (File.expand_path File.dirname __FILE__) + '/cache/'
+TMP = (File.expand_path File.dirname __FILE__) + '/tmp/'
 TARGET = (File.expand_path File.dirname __FILE__) + '/root/'
 
 def download path, base_name
@@ -12,11 +12,11 @@ def download path, base_name
     if File.exist?(target_name)
       return target_name
     end
-    cache_name = CACHE + base_name
+    tmp_name = TMP + base_name
     FileUtils.mkdir_p File.dirname target_name
-    done = `wget -t 1 http://rubygems.org/#{path} -O #{cache_name} && echo done`
+    done = `wget -t 1 http://rubygems.org/#{path} -O #{tmp_name} && echo done`
     if done.strip.end_with?('done')
-      FileUtils.mv cache_name, target_name
+      FileUtils.mv tmp_name, target_name
       target_name
     end
   end

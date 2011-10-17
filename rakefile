@@ -1,9 +1,9 @@
 require "fileutils"
 include FileUtils
 
-desc "clean cache and nginx root"
+desc "clean tmp and nginx root"
 task :clean do
-  Dir.glob '{cache,root}/*' do |f|
+  Dir.glob '{tmp,root}/*' do |f|
     rm_r f, :verbose => true
   end
 end
@@ -11,7 +11,7 @@ end
 desc "prepare and config"
 task :config do
   sh 'erb nginx.conf.erb > nginx.conf'
-  mkdir_p 'cache', :verbose => true
+  mkdir_p 'tmp', :verbose => true
   mkdir_p 'root', :verbose => true
   mkdir_p 'var', :verbose => true
 end
