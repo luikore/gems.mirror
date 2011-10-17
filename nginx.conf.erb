@@ -1,8 +1,10 @@
+<% pwd = `pwd`.strip %>
+
 worker_processes 2;
 worker_rlimit_nofile 8192;
 
-pid <%= `pwd`.strip %>/var/nginx.pid;
-error_log <%= `pwd`.strip %>/var/nginx.error.log;
+pid <%= pwd %>/var/nginx.pid;
+error_log <%= pwd %>/var/nginx.error.log;
 
 events {
   worker_connections 100; # increase if you have lots of clients
@@ -15,8 +17,7 @@ events {
 }
 
 http {
-  access_log /tmp/nginx.access.log;
-  include /etc/nginx/mime.types;
+  access_log <%= pwd %>/var/nginx.access.log;
   default_type binary/octet-stream;
   sendfile on;
 
@@ -27,7 +28,7 @@ http {
   server {
     listen 80;
     keepalive_timeout 120;
-    root <%= `pwd`.strip %>/root;
+    root <%= pwd %>/root;
 
     location ~ ^/(specs|latest_specs|quick|gems)* {
       try_files $uri @app;

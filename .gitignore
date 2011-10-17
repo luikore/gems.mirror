@@ -1,1 +1,4 @@
 nginx.conf
+tmp
+var
+root
