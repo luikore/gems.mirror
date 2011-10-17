@@ -22,4 +22,6 @@ On client machine(not the mirror server!), edit /etc/hosts
 
     crontab -e
 
-Add an hourly task that removes specs.*.gz in nginx root
+Add an hourly task that redownloads specs.*.gz in nginx root
+
+    ruby your_path/renew.rb

@@ -31,11 +31,8 @@ end
 run(
   lambda do |env|
     path = env['PATH_INFO'].sub /^\/+/, ''
-    if path !~ /^(specs|latest_specs|quick|gems)/
-      return [404, {'Content-Type' => 'text/html'}, []]
-    end
     base_name = (path.split '/').last
-    if base_name =~ /(\.gz|\.gem)$/
+    if base_name =~ /\.\w+$/
       if (file = download path, base_name)
         return [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [File.binread(file)]]
       end
