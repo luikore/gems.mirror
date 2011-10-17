@@ -3,7 +3,7 @@ include FileUtils
 
 desc "clean tmp and nginx root"
 task :clean do
-  Dir.glob '{tmp,root}/*' do |f|
+  Dir.glob '{tmp,root,var}/*' do |f|
     rm_r f, :verbose => true
   end
 end
@@ -14,4 +14,14 @@ task :config do
   mkdir_p 'tmp', :verbose => true
   mkdir_p 'root', :verbose => true
   mkdir_p 'var', :verbose => true
+end
+
+desc "start server"
+task :server do
+  sh 'rackup -E production -D config.ru && sudo nginx -c `pwd`/nginx.conf'
+end
+
+desc "grep server processes"
+task :show do
+  exec 'ps ax|grep "nginx\|ruby"|grep -v "ps ax\|grep"'
 end

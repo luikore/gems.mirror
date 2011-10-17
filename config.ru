@@ -2,6 +2,12 @@ require "rack"
 require "fileutils"
 require 'thread'
 
+if RUBY_VERSION =~ /1\.8/
+  class << File
+    alias binread read
+  end
+end
+
 M = Mutex.new
 TMP = (File.expand_path File.dirname __FILE__) + '/tmp/'
 TARGET = (File.expand_path File.dirname __FILE__) + '/root/'
@@ -24,11 +30,14 @@ end
 
 run(
   lambda do |env|
-    path = env['REQUEST_PATH'].sub /^\/+/, ''
+    path = env['PATH_INFO'].sub /^\/+/, ''
+    if path !~ /^(specs|latest_specs|quick|gems)/
+      return [404, {'Content-Type' => 'text/html'}, []]
+    end
     base_name = (path.split '/').last
     if base_name =~ /(\.gz|\.gem)$/
       if (file = download path, base_name)
-        return [200, {'X-Sendfile' => file, 'Content-Length' => '0', 'Content-Type' => 'binary/octet-stream'}, ['']]
+        return [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [File.binread(file)]]
       end
     end
     [404, {'Content-Type' => 'text/html'}, []]

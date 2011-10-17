@@ -1,3 +1,7 @@
+# Requirement
+
+ruby, rack, nginx
+
 # Usage
 
 ### Generate nginx.conf:
@@ -6,8 +10,7 @@
 
 ### Start server:
 
-    rackup -E production -D config.ru
-    sudo nginx -c `pwd`/nginx.conf
+    rake server
 
 ### Simply mock rubygems.org
 
