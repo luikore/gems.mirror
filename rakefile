@@ -9,8 +9,14 @@ task :config do
 end
 
 desc "start server"
-task :server do
-  sh 'rackup -E production -D config.ru && sudo nginx -c `pwd`/nginx.conf'
+task :start do
+  sh 'rackup -E production -s mongrel -D -P `pwd`/var/rack.pid -O Timeout=90 config.ru && sudo nginx -c `pwd`/nginx.conf'
+end
+
+desc "stop server"
+task :stop do
+  sh 'kill -9 `cat var/rack.pid`'
+  sh 'sudo kill `cat var/nginx.pid`'
 end
 
 desc "grep server processes"

@@ -31,6 +31,10 @@ http {
     keepalive_timeout 120;
     root <%= pwd %>/root;
 
+    location = /gems {
+      autoindex on;
+    }
+
     location / {
       try_files $uri @app;
     }
