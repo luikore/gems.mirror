@@ -6,7 +6,7 @@ cd File.dirname(__FILE__) + '/root'
 Dir.glob 'spec*gz' do |f|
   data = open "http://rubygems.org/#{f}", &:read rescue nil
   if data and !data.empty?
-    File.open '../var/renew.log', 'w' do |s|
+    File.open '../var/renew.log', 'w+' do |s|
       s.puts "renewing #{f} (#{data.size}bytes)"
     end
     File.open f, 'w' do |s|
