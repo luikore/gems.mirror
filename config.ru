@@ -3,6 +3,8 @@ require "fileutils"
 require "open-uri"
 require "thread"
 
+FileUtils.cd File.dirname(__FILE__)
+
 TARGET = (File.expand_path File.dirname __FILE__) + '/root/'
 M = Mutex.new
 
