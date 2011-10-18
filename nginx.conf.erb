@@ -35,8 +35,11 @@ http {
       proxy_pass http://rubygems.org;
     }
 
-    location / {
+    location = /gems/ {
       autoindex on;
+    }
+
+    location / {
       try_files $uri @app;
     }
 
