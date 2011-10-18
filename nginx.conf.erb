@@ -31,7 +31,7 @@ http {
     keepalive_timeout 120;
     root <%= pwd %>/root;
 
-    location ~ ^/(specs|latest_specs|prerelease_specs|quick|gems)* {
+    location / {
       try_files $uri @app;
     }
 

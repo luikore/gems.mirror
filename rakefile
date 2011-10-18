@@ -1,17 +1,16 @@
 require "fileutils"
 include FileUtils
 
-desc "clean tmp and nginx root"
+desc "clean log"
 task :clean do
-  Dir.glob '{tmp,root,var}/*' do |f|
-    rm_r f, :verbose => true
+  Dir.glob 'var/*' do |f|
+    File.open(f, 'w'){}
   end
 end
 
 desc "prepare and config"
 task :config do
   sh 'erb nginx.conf.erb > nginx.conf'
-  mkdir_p 'tmp', :verbose => true
   mkdir_p 'root', :verbose => true
   mkdir_p 'var', :verbose => true
 end

@@ -1,42 +1,44 @@
 require "rack"
 require "fileutils"
-require 'thread'
+require "open-uri"
+require "thread"
 
-if RUBY_VERSION =~ /1\.8/
-  class << File
-    alias binread read
-  end
-end
-
-M = Mutex.new
-TMP = (File.expand_path File.dirname __FILE__) + '/tmp/'
 TARGET = (File.expand_path File.dirname __FILE__) + '/root/'
+M = Mutex.new
 
 def download path, base_name
+  target = TARGET + path
+  FileUtils.mkdir_p File.dirname target
+  data = open "http://rubygems.org/#{path}", &:read
   M.synchronize do
-    target_name = TARGET + path
-    if File.exist?(target_name)
-      return target_name
-    end
-    tmp_name = TMP + base_name
-    FileUtils.mkdir_p File.dirname target_name
-    done = `wget -t 1 http://rubygems.org/#{path} -O #{tmp_name} && echo done`
-    if done.strip.end_with?('done')
-      FileUtils.mv tmp_name, target_name
-      target_name
+    File.open target, 'wb' do |f|
+      f << data
     end
   end
+  [target, data]
+end
+
+def index
+  gems = Dir.glob('root/gems/**/*').join "\n"
+  <<-HTML
+  <html><head></head><body><pre>
+    #{gems}
+  </pre></body></html>
+  HTML
 end
 
 run(
   lambda do |env|
     path = env['PATH_INFO'].sub /^\/+/, ''
-    base_name = (path.split '/').last
-    if base_name =~ /\.\w+$/
-      if (file = download path, base_name)
-        return [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [File.binread(file)]]
-      end
+    case path
+    when ''
+      [200, {'Content-Type' => 'text/html'}, [index]]
+    when /\.(gz|rz|gem)$/
+      base_name = (path.split '/').last
+      file, data = download path, base_name
+      [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [data]]
+    else
+      [404, {'Content-Type' => 'text/html'}, ['Not found']]
     end
-    [404, {'Content-Type' => 'text/html'}, []]
   end
 )
