@@ -4,7 +4,7 @@ include FileUtils
 desc "clean log"
 task :clean do
   Dir.glob 'var/*' do |f|
-    File.open(f, 'w'){}
+    "sudo echo >#{f}"
   end
 end
 
