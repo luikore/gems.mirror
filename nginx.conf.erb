@@ -31,11 +31,12 @@ http {
     keepalive_timeout 120;
     root <%= pwd %>/root;
 
-    location = /gems {
-      autoindex on;
+    location ^~ /api/ {
+      proxy_pass http://rubygems.org;
     }
 
     location / {
+      autoindex on;
       try_files $uri @app;
     }
 
