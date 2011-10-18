@@ -1,13 +1,6 @@
 require "fileutils"
 include FileUtils
 
-desc "clean log"
-task :clean do
-  Dir.glob 'var/*' do |f|
-    "sudo echo >#{f}"
-  end
-end
-
 desc "prepare and config"
 task :config do
   sh 'erb nginx.conf.erb > nginx.conf'
