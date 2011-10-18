@@ -19,11 +19,11 @@ def download path, base_name
 end
 
 def index
-  gems = Dir.glob('root/gems/**/*').join "\n"
+  gems = Dir.entries('root/gems').join "\n"
   <<-HTML
-  <html><head></head><body><pre>
-    #{gems}
-  </pre></body></html>
+  <html><head></head><body>
+    <pre>#{gems}</pre>
+  </body></html>
   HTML
 end
 
