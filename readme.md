@@ -20,7 +20,7 @@ ruby, rack, nginx, mongrel
 
     rake stop
 
-### Simply mock rubygems.org
+### Simply mock rubygems.org:
 
 On client machine(not the mirror server!), edit /etc/hosts
 
@@ -33,3 +33,17 @@ On client machine(not the mirror server!), edit /etc/hosts
 Add an hourly task that redownloads specs.*.gz in nginx root
 
     0 */1 * * * /bin/bash -l -c 'ruby your_path/renew.rb'
+
+# Generated dirs and files
+
+- `root` static files downloaded and serving
+- `var` contains logs and pids
+- `nginx.conf` change it if not fit
+
+# List of cached gems
+
+After binding the ip of mirror server to rubygems.org, visit rubygems.org/gems/
+
+# Caveats
+
+Remember to comment out the /etc/hosts binding of the mirror server before doing `gem push` or `gem yank` etc.
