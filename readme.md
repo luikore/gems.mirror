@@ -6,6 +6,8 @@ To speed up bundler for slow network. Bundler 1.0.x and 1.1 are supported.
 
 ruby, rack, nginx, mongrel
 
+Can visit rubygems.org at your server
+
 # Usage
 
 ### Generate nginx.conf:
@@ -20,9 +22,14 @@ ruby, rack, nginx, mongrel
 
     rake stop
 
-### Simply mock rubygems.org:
+### Use mirror for gem and spec downloading:
 
-On client machine(not the mirror server!), edit /etc/hosts
+On client machine(NOT your mirror server!), edit /etc/hosts
+
+    <%= your_gem_mirror_server_ip %> production.cf.rubygems.org
+    <%= your_gem_mirror_server_ip %> production.s3.rubygems.org
+
+If you have problem visiting rubygems.org on client side, bind this instead:
 
     <%= your_gem_mirror_server_ip %> rubygems.org
 
@@ -42,8 +49,10 @@ Add an hourly task that redownloads specs.*.gz in nginx root
 
 # List of cached gems
 
-After binding the ip of mirror server to rubygems.org, visit rubygems.org/gems/
+After binding the ip of mirror server, visit production.cf.rubygems.org/gems/ or rubygems.org/gems/ (with the slash)
 
 # Caveats
 
-Remember to comment out the /etc/hosts binding of the mirror server before doing `gem push` or `gem yank` etc.
+Remember to comment out the /etc/hosts binding of rubygems.org before visiting rubygems.org doing `gem push` or `gem yank`.
+
+If mirror server be in a bad network, can block concurrent requests.
