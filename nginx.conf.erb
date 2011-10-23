@@ -1,3 +1,4 @@
+<% server_names = %[rubygems.org production.cf.rubygems.org] %>
 <% pwd = `pwd`.strip %>
 
 worker_processes 2;
@@ -25,14 +26,15 @@ http {
     server localhost:9292;
   }
 
+  <% server_names.each do |server_name| %>
   server {
     listen 80;
-    server_name rubygems.org;
+    server_name <%= server_name %>;
     keepalive_timeout 120;
     root <%= pwd %>/root;
 
     location ^~ /api/ {
-      proxy_pass http://rubygems.org;
+      proxy_pass http://<%= server_name %>;
     }
 
     location = /gems/ {
@@ -48,4 +50,5 @@ http {
       proxy_pass http://app;
     }
   }
+  <% end %>
 }
