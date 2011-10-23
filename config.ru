@@ -8,10 +8,10 @@ FileUtils.cd File.dirname(__FILE__)
 TARGET = (File.expand_path File.dirname __FILE__) + '/root/'
 M = Mutex.new
 
-def download path, base_name
+def download host, path, base_name
   target = TARGET + path
   FileUtils.mkdir_p File.dirname target
-  data = open "http://rubygems.org/#{path}", &:read
+  data = open "http://#{host}/#{path}", &:read
   M.synchronize do
     File.open target, 'wb' do |f|
       f << data
@@ -26,7 +26,8 @@ run(
     case path
     when /\.(gz|rz|gem)$/
       base_name = (path.split '/').last
-      file, data = download path, base_name
+      host = env['HTTP_HOST']
+      file, data = download host, path, base_name
       [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [data]]
     else
       [404, {'Content-Type' => 'text/html'}, ['Not found']]
