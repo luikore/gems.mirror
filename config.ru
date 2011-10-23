@@ -26,7 +26,7 @@ run(
     case path
     when /\.(gz|rz|gem)$/
       base_name = (path.split '/').last
-      host = env['HTTP_HOST']
+      host = env["HTTP_X_FORWARDED_HOST"] || env['HTTP_HOST'] || 'rubygems.org'
       file, data = download host, path, base_name
       [200, {'Content-Disposition' => "attachment; filename=#{base_name}", 'Content-Type' => 'binary/octet-stream'}, [data]]
     else
